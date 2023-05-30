@@ -1,6 +1,5 @@
 package com.devinhouse.labsky.models;
 
-import com.devinhouse.labsky.enums.Classificacao;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -15,10 +14,10 @@ public class Passageiro {
     private String cpf;
     @Column(nullable = false)
     private String nome;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "data_de_nascimento")
     private LocalDate dataDeNascimento;
     @Column(nullable = false)
-    private Classificacao classificacao;
+    private String classificacao;
     @Column(nullable = false)
     private Integer milhas;
 }
