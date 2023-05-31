@@ -41,8 +41,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(MenorEmFileiraDeEmergenciaException.class)
     public ResponseEntity<Object> handleMenorEmFileiraDeEmergenciaException(MenorEmFileiraDeEmergenciaException e) {
         Map<String, String> response = new HashMap<>();
-        response.put("erro", "Passageiro menor de idade em assento de emergência.");
-        response.put("cpfPassageiro", e.getMessage());
+        response.put("erro", "Não é possível escolher um assento de emergência para um passageiro menor de idade.");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
