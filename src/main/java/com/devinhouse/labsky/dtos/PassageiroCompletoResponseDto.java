@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -17,4 +18,8 @@ public class PassageiroCompletoResponseDto {
     private LocalDate dataDeNascimento;
     private String classificacao;
     private Integer milhas;
+    private String eticket;
+    private String assento;
+    @JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
+    private LocalDateTime dataHoraConfirmacao;
 }
