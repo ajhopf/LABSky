@@ -21,5 +21,4 @@ public class AssentoController {
 
         return ResponseEntity.ok(assentos);
     }
-
 }
