@@ -1,6 +1,5 @@
 package com.devinhouse.labsky.controllers;
 
-import com.devinhouse.labsky.exceptions.ListaVaziaException;
 import com.devinhouse.labsky.models.Passageiro;
 import com.devinhouse.labsky.services.PassageiroService;
 import org.junit.jupiter.api.DisplayName;
@@ -50,11 +49,11 @@ class PassageiroControllerTest {
         }
 
         @Test
-        @DisplayName("Quando não existem passageiros cadastrados, deve retornar status 204")
+        @DisplayName("Quando não existem passageiros cadastrados, deve retornar lista vazia")
         void getPassageiros_listaVazia() throws Exception {
-            Mockito.when(service.getPassageiros()).thenThrow(ListaVaziaException.class);
             mockMvc.perform(get("/passageiros").contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isNoContent());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", is(empty())));
         }
     }
 }
