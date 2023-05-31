@@ -51,10 +51,15 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.mapstruct</groupId>-->
+<!--			<artifactId>mapstruct</artifactId>-->
+<!--			<version>1.5.3.Final</version>-->
+<!--		</dependency>-->
 		<dependency>
-			<groupId>org.mapstruct</groupId>
-			<artifactId>mapstruct</artifactId>
-			<version>1.5.3.Final</version>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 	</dependencies>
 
@@ -63,14 +68,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-<!--				<configuration>-->
-<!--					<excludes>-->
-<!--						<exclude>-->
-<!--							<groupId>org.projectlombok</groupId>-->
-<!--							<artifactId>lombok</artifactId>-->
-<!--						</exclude>-->
-<!--					</excludes>-->
-<!--				</configuration>-->
 			</plugin>
 
 			<plugin>
@@ -87,23 +84,23 @@
 							<version>1.18.28</version>
 						</path>
 						<!-- This is needed when using Lombok 1.18.16 and above -->
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok-mapstruct-binding</artifactId>
-							<version>0.2.0</version>
-						</path>
-						<path>
-							<groupId>org.mapstruct</groupId>
-							<artifactId>mapstruct-processor</artifactId>
-							<version>1.5.3.Final</version>
-						</path>
+<!--						<path>-->
+<!--							<groupId>org.projectlombok</groupId>-->
+<!--							<artifactId>lombok-mapstruct-binding</artifactId>-->
+<!--							<version>0.2.0</version>-->
+<!--						</path>-->
+<!--						<path>-->
+<!--							<groupId>org.mapstruct</groupId>-->
+<!--							<artifactId>mapstruct-processor</artifactId>-->
+<!--							<version>1.5.3.Final</version>-->
+<!--						</path>-->
 					</annotationProcessorPaths>
 					<!-- Adicionei isso pois o spring não estava reconhecendo um Bean do mapper -->
-					<compilerArgs>
-						<compilerArg>
-							-Amapstruct.defaultComponentModel=spring
-						</compilerArg>
-					</compilerArgs>
+<!--					<compilerArgs>-->
+<!--						<compilerArg>-->
+<!--							-Amapstruct.defaultComponentModel=spring-->
+<!--						</compilerArg>-->
+<!--					</compilerArgs>-->
 				</configuration>
 			</plugin>
 		</plugins>

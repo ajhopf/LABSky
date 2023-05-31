@@ -1,5 +1,6 @@
 package com.devinhouse.labsky.services;
 
+import com.devinhouse.labsky.exceptions.ListaVaziaException;
 import com.devinhouse.labsky.models.Passageiro;
 import com.devinhouse.labsky.repositories.PassageiroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,12 @@ public class PassageiroService {
     PassageiroRepository repository;
 
     public List<Passageiro> getPassageiros() {
-        return repository.findAll();
+        List<Passageiro> passageiros = repository.findAll();
+
+        if (passageiros.isEmpty()) {
+            throw new ListaVaziaException();
+        }
+
+        return passageiros;
     }
 }
