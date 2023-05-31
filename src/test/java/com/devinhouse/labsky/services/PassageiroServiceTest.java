@@ -1,5 +1,6 @@
 package com.devinhouse.labsky.services;
 
+import com.devinhouse.labsky.exceptions.PassageiroNaoEncontradoException;
 import com.devinhouse.labsky.models.Passageiro;
 import com.devinhouse.labsky.repositories.PassageiroRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -13,9 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class PassageiroServiceTest {
@@ -26,7 +27,7 @@ class PassageiroServiceTest {
 
     @Nested
     @DisplayName("Método: getPassageiros")
-    class getPassageiros {
+    class GetPassageiros {
         @Test
         @DisplayName("Quando repositório contém registros, deve retornar lista com os registros")
         void getPassageiros() {
@@ -48,6 +49,25 @@ class PassageiroServiceTest {
         void getPassageiros_listaVazia() {
             List<Passageiro> passageiros = service.getPassageiros();
             assertTrue(passageiros.isEmpty());
+        }
+    }
+
+    @Nested
+    @DisplayName("Método: getPassageiroPeloCpf")
+    class GetPassageiroPeloCpf {
+        @Test
+        @DisplayName("Quando encontrar um passageiro pelo cpf, deve retornar este passageiro")
+        void getPassageiroPeloCpf() {
+            Passageiro passageiro = new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100);
+            Mockito.when(repository.findById(Mockito.anyString())).thenReturn(Optional.of(passageiro));
+            Passageiro resultado = service.getPassageiroPeloCpf(passageiro.getCpf());
+            assertEquals(passageiro, resultado);
+        }
+
+        @Test
+        @DisplayName("Quando não encontrar um passageiro com o cpf informado, deve lançar exceção")
+        void getPassageiroPeloCpf_passageiroNaoEncontrado() {
+            assertThrows(PassageiroNaoEncontradoException.class, () -> service.getPassageiroPeloCpf("000"));
         }
     }
 

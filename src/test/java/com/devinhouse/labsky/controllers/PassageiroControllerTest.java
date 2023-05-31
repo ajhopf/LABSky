@@ -1,6 +1,6 @@
 package com.devinhouse.labsky.controllers;
 
-import com.devinhouse.labsky.exceptions.ListaVaziaException;
+import com.devinhouse.labsky.exceptions.PassageiroNaoEncontradoException;
 import com.devinhouse.labsky.models.Passageiro;
 import com.devinhouse.labsky.services.PassageiroService;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,11 +51,41 @@ class PassageiroControllerTest {
         }
 
         @Test
-        @DisplayName("Quando não existem passageiros cadastrados, deve retornar status 204")
+        @DisplayName("Quando não existem passageiros cadastrados, deve retornar lista vazia")
         void getPassageiros_listaVazia() throws Exception {
-            Mockito.when(service.getPassageiros()).thenThrow(ListaVaziaException.class);
             mockMvc.perform(get("/passageiros").contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isNoContent());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", is(empty())));
+        }
+    }
+
+    @Nested
+    @DisplayName("Método: getPassageiro")
+    class GetPassageiro {
+        @Test
+        @DisplayName("Quando passageiro com cpf informado estiver cadastrado, deve retornar o passageiro")
+        void getPassageiro() throws Exception {
+            Passageiro passageiro = new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100);
+            Mockito.when(service.getPassageiroPeloCpf(Mockito.anyString())).thenReturn(passageiro);
+            mockMvc.perform(get("/passageiros/{cpf}", passageiro.getCpf()).contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.cpf", is(passageiro.getCpf())));
+        }
+
+        @Test
+        @DisplayName("Quando passageiro com cpf informado não estiver cadastrado, deve retornar erro com status 404")
+        void getPassageiro_naoEncontrado() throws Exception {
+            Mockito.when(service.getPassageiroPeloCpf(Mockito.anyString())).thenThrow(PassageiroNaoEncontradoException.class);
+            mockMvc.perform(get("/passageiros/{cpf}", "111.111.111-11").contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        @DisplayName("Quando passageiro com cpf informado não estiver cadastrado, deve retornar mensagem de erro no json body")
+        void getPassageiro_naoEncontradoMensagemDeErro() throws Exception {
+            Mockito.when(service.getPassageiroPeloCpf(Mockito.anyString())).thenThrow(PassageiroNaoEncontradoException.class);
+            mockMvc.perform(get("/passageiros/{cpf}", "111.111.111-11").contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.erro", containsStringIgnoringCase("Passageiro com cpf informado não encontrado(a)")));
         }
     }
 }
