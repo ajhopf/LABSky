@@ -1,9 +1,9 @@
 package com.devinhouse.labsky.controllers;
 
 import com.devinhouse.labsky.dtos.PassageiroResponseDto;
-import com.devinhouse.labsky.mappers.PassageiroMapper;
 import com.devinhouse.labsky.models.Passageiro;
 import com.devinhouse.labsky.services.PassageiroService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +17,15 @@ import java.util.List;
 public class PassageiroController {
     @Autowired
     private PassageiroService service;
-    @Autowired
-    private PassageiroMapper mapper;
+
+    private final ModelMapper modelMapper = new ModelMapper();
 
     @GetMapping
     public ResponseEntity<List<PassageiroResponseDto>> getPassageiros() {
         List<Passageiro> passageiros = service.getPassageiros();
-        List<PassageiroResponseDto> passageirosResponse = mapper.map(passageiros);
+
+        List<PassageiroResponseDto> passageirosResponse = passageiros.stream().map(passageiro -> modelMapper.map(passageiro, PassageiroResponseDto.class)).toList();
+
         return ResponseEntity.ok(passageirosResponse);
     }
 }
