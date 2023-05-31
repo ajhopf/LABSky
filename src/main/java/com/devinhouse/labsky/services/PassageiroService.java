@@ -47,7 +47,7 @@ public class PassageiroService {
         passageiro.setMalasDespachadas(requestDto.getMalasDespachadas());
         passageiro.setAssento(assento.getAssento());
         passageiro.setDataHoraConfirmacao(LocalDateTime.now());
-        repository.save(passageiro);
+        passageiro = repository.save(passageiro);
 
         System.out.printf("Confirmação feita pelo passageiro de CPF %s com e-ticket %s", passageiro.getCpf(), eticket);
 

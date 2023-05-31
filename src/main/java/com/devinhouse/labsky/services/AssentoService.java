@@ -45,7 +45,7 @@ public class AssentoService {
         }
 
         assento.setReservado('1');
-        repository.save(assento);
+        assento = repository.save(assento);
 
         return assento;
     }
