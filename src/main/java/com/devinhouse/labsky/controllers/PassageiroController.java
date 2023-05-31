@@ -1,6 +1,7 @@
 package com.devinhouse.labsky.controllers;
 
 import com.devinhouse.labsky.dtos.PassageiroResponseDto;
+import com.devinhouse.labsky.exceptions.ListaVaziaException;
 import com.devinhouse.labsky.mappers.PassageiroMapper;
 import com.devinhouse.labsky.models.Passageiro;
 import com.devinhouse.labsky.services.PassageiroService;
@@ -23,6 +24,11 @@ public class PassageiroController {
     @GetMapping
     public ResponseEntity<List<PassageiroResponseDto>> getPassageiros() {
         List<Passageiro> passageiros = service.getPassageiros();
+
+        if (passageiros.isEmpty()) {
+            throw new ListaVaziaException();
+        }
+
         List<PassageiroResponseDto> passageirosResponse = mapper.map(passageiros);
         return ResponseEntity.ok(passageirosResponse);
     }
