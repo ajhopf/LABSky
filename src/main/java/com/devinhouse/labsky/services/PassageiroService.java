@@ -54,7 +54,7 @@ public class PassageiroService {
         return new CheckinResponseDto(eticket);
     }
 
-    private Integer acumularMilhas(Integer milhas, String classificacao) {
+    public Integer acumularMilhas(Integer milhas, String classificacao) {
         Integer milhasDaViagemAtual;
 
         switch (classificacao) {
