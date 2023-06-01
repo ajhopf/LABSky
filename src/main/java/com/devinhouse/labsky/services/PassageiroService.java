@@ -18,7 +18,7 @@ public class PassageiroService {
     @Autowired
     PassageiroRepository repository;
     @Autowired
-    AssentoService assentoService;
+    private AssentoService assentoService;
 
     public List<Passageiro> getPassageiros() {
         return repository.findAll();
