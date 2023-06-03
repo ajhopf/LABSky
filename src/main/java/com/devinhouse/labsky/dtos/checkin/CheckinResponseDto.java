@@ -15,8 +15,4 @@ public class CheckinResponseDto {
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime dataHoraConfirmacao;
 
-    public CheckinResponseDto(String eticket) {
-        this.eticket = eticket;
-        this.dataHoraConfirmacao = LocalDateTime.now();
-    }
 }

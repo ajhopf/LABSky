@@ -2,21 +2,23 @@ package com.devinhouse.labsky.services;
 
 import com.devinhouse.labsky.dtos.checkin.CheckinRequestDto;
 import com.devinhouse.labsky.dtos.checkin.CheckinResponseDto;
+import com.devinhouse.labsky.exceptions.PacienteJaRealizouCheckinException;
 import com.devinhouse.labsky.exceptions.PassageiroNaoEncontradoException;
 import com.devinhouse.labsky.models.Assento;
+import com.devinhouse.labsky.models.BilheteDeEmbarque;
 import com.devinhouse.labsky.models.Passageiro;
 import com.devinhouse.labsky.repositories.PassageiroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class PassageiroService {
     @Autowired
     PassageiroRepository repository;
+    @Autowired
+    private BilheteDeEmbarqueService bilheteDeEmbarqueService;
     @Autowired
     private AssentoService assentoService;
 
@@ -33,25 +35,27 @@ public class PassageiroService {
 
     public CheckinResponseDto realizarCheckin(CheckinRequestDto requestDto) {
         Passageiro passageiro = getPassageiroPeloCpf(requestDto.getCpf());
+        Boolean malasDespachadas = requestDto.getMalasDespachadas();
+
+        if (bilheteDeEmbarqueService.cpfJaTemBilhete(passageiro.getCpf())) {
+            throw new PacienteJaRealizouCheckinException(passageiro.getCpf());
+        }
 
         Assento assento = assentoService
                 .reservarAssento(
                         requestDto.getAssento().toUpperCase(),
                         passageiro.getDataDeNascimento(),
-                        requestDto.getMalasDespachadas());
+                        malasDespachadas);
 
-        String eticket = UUID.randomUUID().toString();
         Integer milhasAcumuladas = acumularMilhas(passageiro.getMilhas(), passageiro.getClassificacao());
         passageiro.setMilhas(milhasAcumuladas);
-        passageiro.setEticket(eticket);
-        passageiro.setMalasDespachadas(requestDto.getMalasDespachadas());
-        passageiro.setAssento(assento.getAssento());
-        passageiro.setDataHoraConfirmacao(LocalDateTime.now());
         passageiro = repository.save(passageiro);
 
-        System.out.printf("Confirmação feita pelo passageiro de CPF %s com e-ticket %s", passageiro.getCpf(), eticket);
+        BilheteDeEmbarque bilheteDeEmbarque = bilheteDeEmbarqueService.gerarBilhete(passageiro, assento.getAssento(), malasDespachadas);
 
-        return new CheckinResponseDto(eticket);
+        System.out.printf("Confirmação feita pelo passageiro de CPF %s com e-ticket %s", passageiro.getCpf(), bilheteDeEmbarque.getEticket());
+
+        return new CheckinResponseDto(bilheteDeEmbarque.getEticket(), bilheteDeEmbarque.getDataHoraConfirmacao());
     }
 
     public Integer acumularMilhas(Integer milhas, String classificacao) {

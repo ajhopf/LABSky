@@ -73,4 +73,13 @@ public class RestExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+    @ExceptionHandler(PacienteJaRealizouCheckinException.class)
+    public ResponseEntity<Object> handlePacienteJaRealizouCheckinException(PacienteJaRealizouCheckinException e) {
+        Map<String, String> response = new HashMap<>();
+
+        response.put("erro", "Passageiro com o cpf " + e.getMessage() + " já realizou checkin.");
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 }
