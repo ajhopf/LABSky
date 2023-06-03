@@ -18,4 +18,6 @@ public class Assento {
     private String assento;
     @Column(nullable = false, name = "fileira_de_emergencia")
     private char fileiraDeEmergencia;
+    @Column(columnDefinition = "char default '0'")
+    private char reservado;
 }

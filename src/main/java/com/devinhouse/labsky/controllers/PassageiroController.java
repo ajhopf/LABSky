@@ -1,16 +1,16 @@
 package com.devinhouse.labsky.controllers;
 
-import com.devinhouse.labsky.dtos.PassageiroCompletoResponseDto;
-import com.devinhouse.labsky.dtos.PassageiroSimplesResponseDto;
+import com.devinhouse.labsky.dtos.checkin.CheckinRequestDto;
+import com.devinhouse.labsky.dtos.checkin.CheckinResponseDto;
+import com.devinhouse.labsky.dtos.passageiro.PassageiroCompletoResponseDto;
+import com.devinhouse.labsky.dtos.passageiro.PassageiroSimplesResponseDto;
 import com.devinhouse.labsky.models.Passageiro;
 import com.devinhouse.labsky.services.PassageiroService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,5 +36,13 @@ public class PassageiroController {
         Passageiro passageiro = service.getPassageiroPeloCpf(cpf);
         PassageiroSimplesResponseDto passageiroCompletoResponseDto = modelMapper.map(passageiro, PassageiroSimplesResponseDto.class);
         return ResponseEntity.ok(passageiroCompletoResponseDto);
+    }
+
+    @PostMapping("/confirmacao")
+    public ResponseEntity<CheckinResponseDto> realizarCheckin(
+            @RequestBody @Valid CheckinRequestDto requestDto) {
+        CheckinResponseDto response = service.realizarCheckin(requestDto);
+
+        return ResponseEntity.ok(response);
     }
 }

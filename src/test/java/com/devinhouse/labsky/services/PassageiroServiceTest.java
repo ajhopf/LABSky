@@ -1,7 +1,9 @@
 package com.devinhouse.labsky.services;
 
+import com.devinhouse.labsky.dtos.checkin.CheckinRequestDto;
 import com.devinhouse.labsky.exceptions.PassageiroNaoEncontradoException;
 import com.devinhouse.labsky.models.Passageiro;
+import com.devinhouse.labsky.repositories.AssentoRepository;
 import com.devinhouse.labsky.repositories.PassageiroRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,8 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class PassageiroServiceTest {
     @Mock
     private PassageiroRepository repository;
+    @Mock
+    private AssentoRepository assentoRepository;
     @InjectMocks
     private PassageiroService service;
+    @InjectMocks
+    private AssentoService assentoService;
 
     @Nested
     @DisplayName("Método: getPassageiros")
@@ -33,8 +39,8 @@ class PassageiroServiceTest {
         void getPassageiros() {
             //given
             List<Passageiro> passageiros = List.of(
-                    new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100),
-                    new Passageiro("111.111.111-11", "Rachel", LocalDate.now(), "PRATA", 50)
+                    new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100, null, null, null, null),
+                    new Passageiro("111.111.111-11", "Rachel", LocalDate.now(), "PRATA", 50, null, null, null, null)
             );
             Mockito.when(repository.findAll()).thenReturn(passageiros);
             //when
@@ -58,7 +64,7 @@ class PassageiroServiceTest {
         @Test
         @DisplayName("Quando encontrar um passageiro pelo cpf, deve retornar este passageiro")
         void getPassageiroPeloCpf() {
-            Passageiro passageiro = new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100);
+            Passageiro passageiro = new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100, null, null, null, null);
             Mockito.when(repository.findById(Mockito.anyString())).thenReturn(Optional.of(passageiro));
             Passageiro resultado = service.getPassageiroPeloCpf(passageiro.getCpf());
             assertEquals(passageiro, resultado);
@@ -68,6 +74,77 @@ class PassageiroServiceTest {
         @DisplayName("Quando não encontrar um passageiro com o cpf informado, deve lançar exceção")
         void getPassageiroPeloCpf_passageiroNaoEncontrado() {
             assertThrows(PassageiroNaoEncontradoException.class, () -> service.getPassageiroPeloCpf("000"));
+        }
+    }
+
+    @Nested
+    @DisplayName("Método: realizarCheckin")
+    class RealizarCheckin {
+        @Test
+        @DisplayName("Quando não encontrar um passageiro com o cpf informado, deve lançar exceção")
+        void realizarCheckin_passageiroNaoEncontrado() {
+            CheckinRequestDto requestDto = new CheckinRequestDto("000", "1A", Mockito.anyBoolean());
+
+            assertThrows(PassageiroNaoEncontradoException.class, () -> service.realizarCheckin(requestDto));
+        }
+    }
+
+    @Nested
+    @DisplayName("Método: acumularMilhas")
+    class AcumularMilhas {
+        @Test
+        @DisplayName("Quando classificacao for VIP, deve retornar milhas atuais mais 100")
+        void acumularMilhas_vip() {
+            Integer milhas = 100;
+
+            String classificacao = "VIP";
+            Integer resultado = service.acumularMilhas(milhas, classificacao);
+
+            assertEquals(milhas + 100, resultado);
+        }
+
+        @Test
+        @DisplayName("Quando classificacao for OURO, deve retornar milhas atuais mais 80")
+        void acumularMilhas_ouro() {
+            Integer milhas = 100;
+
+            String classificacao = "OURO";
+            Integer resultado = service.acumularMilhas(milhas, classificacao);
+
+            assertEquals(milhas + 80, resultado);
+        }
+
+        @Test
+        @DisplayName("Quando classificacao for PRATA, deve retornar milhas atuais mais 50")
+        void acumularMilhas_prata() {
+            Integer milhas = 100;
+
+            String classificacao = "PRATA";
+            Integer resultado = service.acumularMilhas(milhas, classificacao);
+
+            assertEquals(milhas + 50, resultado);
+        }
+
+        @Test
+        @DisplayName("Quando classificacao for BRONZE, deve retornar milhas atuais mais 30")
+        void acumularMilhas_bronze() {
+            Integer milhas = 100;
+
+            String classificacao = "BRONZE";
+            Integer resultado = service.acumularMilhas(milhas, classificacao);
+
+            assertEquals(milhas + 30, resultado);
+        }
+
+        @Test
+        @DisplayName("Quando classificacao for ASSOCIADO, deve retornar milhas atuais mais 10")
+        void acumularMilhas_associado() {
+            Integer milhas = 100;
+
+            String classificacao = "ASSOCIADO";
+            Integer resultado = service.acumularMilhas(milhas, classificacao);
+
+            assertEquals(milhas + 10, resultado);
         }
     }
 
