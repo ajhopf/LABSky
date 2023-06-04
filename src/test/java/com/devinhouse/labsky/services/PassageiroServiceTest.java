@@ -3,7 +3,6 @@ package com.devinhouse.labsky.services;
 import com.devinhouse.labsky.dtos.checkin.CheckinRequestDto;
 import com.devinhouse.labsky.exceptions.PassageiroNaoEncontradoException;
 import com.devinhouse.labsky.models.Passageiro;
-import com.devinhouse.labsky.repositories.AssentoRepository;
 import com.devinhouse.labsky.repositories.PassageiroRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,13 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class PassageiroServiceTest {
     @Mock
     private PassageiroRepository repository;
-    @Mock
-    private AssentoRepository assentoRepository;
     @InjectMocks
     private PassageiroService service;
-    @InjectMocks
-    private AssentoService assentoService;
-
     @Nested
     @DisplayName("Método: getPassageiros")
     class GetPassageiros {

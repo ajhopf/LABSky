@@ -2,7 +2,7 @@ package com.devinhouse.labsky.services;
 
 import com.devinhouse.labsky.dtos.checkin.CheckinRequestDto;
 import com.devinhouse.labsky.dtos.checkin.CheckinResponseDto;
-import com.devinhouse.labsky.exceptions.PacienteJaRealizouCheckinException;
+import com.devinhouse.labsky.exceptions.PassageiroJaRealizouCheckinException;
 import com.devinhouse.labsky.exceptions.PassageiroNaoEncontradoException;
 import com.devinhouse.labsky.models.Assento;
 import com.devinhouse.labsky.models.BilheteDeEmbarque;
@@ -38,7 +38,7 @@ public class PassageiroService {
         Boolean malasDespachadas = requestDto.getMalasDespachadas();
 
         if (bilheteDeEmbarqueService.cpfJaTemBilhete(passageiro.getCpf())) {
-            throw new PacienteJaRealizouCheckinException(passageiro.getCpf());
+            throw new PassageiroJaRealizouCheckinException(passageiro.getCpf());
         }
 
         Assento assento = assentoService
