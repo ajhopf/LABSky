@@ -179,6 +179,21 @@ class PassageiroControllerTest {
         }
 
         @Test
+        @DisplayName("Quando um passageiro que já fez checkin tentar fazer checkin novamente, deve retornar mensagem de erro e status 400")
+        void realizarCheckin_jaRealizouCheckin() throws Exception {
+            CheckinRequestDto requestDto = new CheckinRequestDto("111", "1A", false);
+            Mockito.when(service.realizarCheckin(Mockito.any(CheckinRequestDto.class)))
+                    .thenThrow(PassageiroJaRealizouCheckinException.class);
+            String requestJson = objectMapper.writeValueAsString(requestDto);
+
+            mockMvc.perform(post("/passageiros/confirmacao")
+                            .content(requestJson)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.erro", containsStringIgnoringCase("já realizou checkin.")))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
         @DisplayName("Quando checkin for realizado com sucesso, deve retornar informações de checkin e status 200")
         void realizarCheckin() throws Exception {
             CheckinRequestDto requestDto = new CheckinRequestDto("111", "1A", false);
