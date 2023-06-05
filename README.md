@@ -12,6 +12,7 @@
 - [Endpoints](#endpoints)
   - [Consulta de dados completos de passageiro](#consulta-de-dados-completos-de-passageiros)
   - [Consulta de passageiro pelo cpf](#consulta-de-passageiro-pelo-cpf)
+  - [Consulta de assentos](#consulta-de-assentos)
   - [Realizar confirmação(checkin)](#realizar-confirmação--checkin----emitir-bilhete-de-embarque)
 
 <hr>
