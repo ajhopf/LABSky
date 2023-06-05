@@ -4,6 +4,7 @@ import com.devinhouse.labsky.dtos.checkin.CheckinRequestDto;
 import com.devinhouse.labsky.dtos.checkin.CheckinResponseDto;
 import com.devinhouse.labsky.exceptions.*;
 import com.devinhouse.labsky.models.Passageiro;
+import com.devinhouse.labsky.services.BilheteDeEmbarqueService;
 import com.devinhouse.labsky.services.PassageiroService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -38,6 +39,8 @@ class PassageiroControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private PassageiroService service;
+    @MockBean
+    private BilheteDeEmbarqueService bilheteDeEmbarqueService;
 
     @Nested
     @DisplayName("Método: getPassageiros")
@@ -46,8 +49,8 @@ class PassageiroControllerTest {
         @DisplayName("Quando tem passageiros cadastrados, deve retornar lista com estes passageiros")
         void getPassageiros() throws Exception {
             List<Passageiro> passageiros = List.of(
-                    new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100, null, null, null, null),
-                    new Passageiro("111.111.111-11", "Rachel", LocalDate.now(), "PRATA", 50, null, null, null, null)
+                    new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100),
+                    new Passageiro("111.111.111-11", "Rachel", LocalDate.now(), "PRATA", 50)
             );
             Mockito.when(service.getPassageiros()).thenReturn(passageiros);
             mockMvc.perform(get("/passageiros").contentType(MediaType.APPLICATION_JSON))
@@ -70,7 +73,7 @@ class PassageiroControllerTest {
         @Test
         @DisplayName("Quando passageiro com cpf informado estiver cadastrado, deve retornar o passageiro")
         void getPassageiro() throws Exception {
-            Passageiro passageiro = new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100, null, null, null, null);
+            Passageiro passageiro = new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100);
             Mockito.when(service.getPassageiroPeloCpf(Mockito.anyString()))
                     .thenReturn(passageiro);
             mockMvc.perform(get("/passageiros/{cpf}", passageiro.getCpf()).contentType(MediaType.APPLICATION_JSON))
@@ -172,6 +175,21 @@ class PassageiroControllerTest {
                             .content(requestJson)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.erro", containsStringIgnoringCase("Assento escolhido está em uma fileira de emergência. Bagagens devem ser despachadas.")))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Quando um passageiro que já fez checkin tentar fazer checkin novamente, deve retornar mensagem de erro e status 400")
+        void realizarCheckin_jaRealizouCheckin() throws Exception {
+            CheckinRequestDto requestDto = new CheckinRequestDto("111", "1A", false);
+            Mockito.when(service.realizarCheckin(Mockito.any(CheckinRequestDto.class)))
+                    .thenThrow(PassageiroJaRealizouCheckinException.class);
+            String requestJson = objectMapper.writeValueAsString(requestDto);
+
+            mockMvc.perform(post("/passageiros/confirmacao")
+                            .content(requestJson)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.erro", containsStringIgnoringCase("já realizou checkin.")))
                     .andExpect(status().isBadRequest());
         }
 

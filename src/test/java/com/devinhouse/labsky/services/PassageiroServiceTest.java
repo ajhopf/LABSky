@@ -3,7 +3,6 @@ package com.devinhouse.labsky.services;
 import com.devinhouse.labsky.dtos.checkin.CheckinRequestDto;
 import com.devinhouse.labsky.exceptions.PassageiroNaoEncontradoException;
 import com.devinhouse.labsky.models.Passageiro;
-import com.devinhouse.labsky.repositories.AssentoRepository;
 import com.devinhouse.labsky.repositories.PassageiroRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,13 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class PassageiroServiceTest {
     @Mock
     private PassageiroRepository repository;
-    @Mock
-    private AssentoRepository assentoRepository;
     @InjectMocks
     private PassageiroService service;
-    @InjectMocks
-    private AssentoService assentoService;
-
     @Nested
     @DisplayName("Método: getPassageiros")
     class GetPassageiros {
@@ -39,8 +33,8 @@ class PassageiroServiceTest {
         void getPassageiros() {
             //given
             List<Passageiro> passageiros = List.of(
-                    new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100, null, null, null, null),
-                    new Passageiro("111.111.111-11", "Rachel", LocalDate.now(), "PRATA", 50, null, null, null, null)
+                    new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100),
+                    new Passageiro("111.111.111-11", "Rachel", LocalDate.now(), "PRATA", 50)
             );
             Mockito.when(repository.findAll()).thenReturn(passageiros);
             //when
@@ -64,7 +58,7 @@ class PassageiroServiceTest {
         @Test
         @DisplayName("Quando encontrar um passageiro pelo cpf, deve retornar este passageiro")
         void getPassageiroPeloCpf() {
-            Passageiro passageiro = new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100, null, null, null, null);
+            Passageiro passageiro = new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100);
             Mockito.when(repository.findById(Mockito.anyString())).thenReturn(Optional.of(passageiro));
             Passageiro resultado = service.getPassageiroPeloCpf(passageiro.getCpf());
             assertEquals(passageiro, resultado);
