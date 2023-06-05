@@ -15,7 +15,7 @@ public class PassageiroCompletoResponseDto {
     private String cpf;
     private String nome;
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private LocalDate dataDeNascimento;
+    private LocalDate dataNascimento;
     private String classificacao;
     private Integer milhas;
     private String eticket;
