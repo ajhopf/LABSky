@@ -47,7 +47,7 @@ public class PassageiroService {
                         passageiro.getDataDeNascimento(),
                         malasDespachadas);
 
-        Integer milhasAcumuladas = acumularMilhas(passageiro.getMilhas(), passageiro.getClassificacao());
+        Integer milhasAcumuladas = acumularMilhas(passageiro.getMilhas(), passageiro.getClassificacao().toString());
         passageiro.setMilhas(milhasAcumuladas);
         passageiro = repository.save(passageiro);
 
