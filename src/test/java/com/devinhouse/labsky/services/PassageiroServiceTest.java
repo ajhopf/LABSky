@@ -1,6 +1,7 @@
 package com.devinhouse.labsky.services;
 
 import com.devinhouse.labsky.dtos.checkin.CheckinRequestDto;
+import com.devinhouse.labsky.enums.Classificacao;
 import com.devinhouse.labsky.exceptions.PassageiroNaoEncontradoException;
 import com.devinhouse.labsky.models.Passageiro;
 import com.devinhouse.labsky.repositories.PassageiroRepository;
@@ -33,8 +34,8 @@ class PassageiroServiceTest {
         void getPassageiros() {
             //given
             List<Passageiro> passageiros = List.of(
-                    new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100),
-                    new Passageiro("111.111.111-11", "Rachel", LocalDate.now(), "PRATA", 50)
+                    new Passageiro("000.000.000-00", "André", LocalDate.now(), Classificacao.OURO, 100),
+                    new Passageiro("111.111.111-11", "Rachel", LocalDate.now(), Classificacao.PRATA, 50)
             );
             Mockito.when(repository.findAll()).thenReturn(passageiros);
             //when
@@ -58,7 +59,7 @@ class PassageiroServiceTest {
         @Test
         @DisplayName("Quando encontrar um passageiro pelo cpf, deve retornar este passageiro")
         void getPassageiroPeloCpf() {
-            Passageiro passageiro = new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100);
+            Passageiro passageiro = new Passageiro("000.000.000-00", "André", LocalDate.now(), Classificacao.OURO, 100);
             Mockito.when(repository.findById(Mockito.anyString())).thenReturn(Optional.of(passageiro));
             Passageiro resultado = service.getPassageiroPeloCpf(passageiro.getCpf());
             assertEquals(passageiro, resultado);
@@ -91,8 +92,8 @@ class PassageiroServiceTest {
         void acumularMilhas_vip() {
             Integer milhas = 100;
 
-            String classificacao = "VIP";
-            Integer resultado = service.acumularMilhas(milhas, classificacao);
+            Classificacao classificacao = Classificacao.VIP;
+            Integer resultado = service.acumularMilhas(milhas, classificacao.toString());
 
             assertEquals(milhas + 100, resultado);
         }
@@ -102,8 +103,8 @@ class PassageiroServiceTest {
         void acumularMilhas_ouro() {
             Integer milhas = 100;
 
-            String classificacao = "OURO";
-            Integer resultado = service.acumularMilhas(milhas, classificacao);
+            Classificacao classificacao = Classificacao.OURO;
+            Integer resultado = service.acumularMilhas(milhas, classificacao.toString());
 
             assertEquals(milhas + 80, resultado);
         }
@@ -113,8 +114,8 @@ class PassageiroServiceTest {
         void acumularMilhas_prata() {
             Integer milhas = 100;
 
-            String classificacao = "PRATA";
-            Integer resultado = service.acumularMilhas(milhas, classificacao);
+            Classificacao classificacao = Classificacao.PRATA;
+            Integer resultado = service.acumularMilhas(milhas, classificacao.toString());
 
             assertEquals(milhas + 50, resultado);
         }
@@ -124,8 +125,8 @@ class PassageiroServiceTest {
         void acumularMilhas_bronze() {
             Integer milhas = 100;
 
-            String classificacao = "BRONZE";
-            Integer resultado = service.acumularMilhas(milhas, classificacao);
+            Classificacao classificacao = Classificacao.BRONZE;
+            Integer resultado = service.acumularMilhas(milhas, classificacao.toString());
 
             assertEquals(milhas + 30, resultado);
         }
@@ -135,8 +136,8 @@ class PassageiroServiceTest {
         void acumularMilhas_associado() {
             Integer milhas = 100;
 
-            String classificacao = "ASSOCIADO";
-            Integer resultado = service.acumularMilhas(milhas, classificacao);
+            Classificacao classificacao = Classificacao.ASSOCIADO;
+            Integer resultado = service.acumularMilhas(milhas, classificacao.toString());
 
             assertEquals(milhas + 10, resultado);
         }

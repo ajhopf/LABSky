@@ -2,6 +2,7 @@ package com.devinhouse.labsky.controllers;
 
 import com.devinhouse.labsky.dtos.checkin.CheckinRequestDto;
 import com.devinhouse.labsky.dtos.checkin.CheckinResponseDto;
+import com.devinhouse.labsky.enums.Classificacao;
 import com.devinhouse.labsky.exceptions.*;
 import com.devinhouse.labsky.models.Passageiro;
 import com.devinhouse.labsky.services.BilheteDeEmbarqueService;
@@ -49,8 +50,8 @@ class PassageiroControllerTest {
         @DisplayName("Quando tem passageiros cadastrados, deve retornar lista com estes passageiros")
         void getPassageiros() throws Exception {
             List<Passageiro> passageiros = List.of(
-                    new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100),
-                    new Passageiro("111.111.111-11", "Rachel", LocalDate.now(), "PRATA", 50)
+                    new Passageiro("000.000.000-00", "André", LocalDate.now(), Classificacao.OURO, 100),
+                    new Passageiro("111.111.111-11", "Rachel", LocalDate.now(), Classificacao.PRATA, 50)
             );
             Mockito.when(service.getPassageiros()).thenReturn(passageiros);
             mockMvc.perform(get("/passageiros").contentType(MediaType.APPLICATION_JSON))
@@ -73,7 +74,7 @@ class PassageiroControllerTest {
         @Test
         @DisplayName("Quando passageiro com cpf informado estiver cadastrado, deve retornar o passageiro")
         void getPassageiro() throws Exception {
-            Passageiro passageiro = new Passageiro("000.000.000-00", "André", LocalDate.now(), "OURO", 100);
+            Passageiro passageiro = new Passageiro("000.000.000-00", "André", LocalDate.now(), Classificacao.OURO, 100);
             Mockito.when(service.getPassageiroPeloCpf(Mockito.anyString()))
                     .thenReturn(passageiro);
             mockMvc.perform(get("/passageiros/{cpf}", passageiro.getCpf()).contentType(MediaType.APPLICATION_JSON))
